@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎮 GameVid RGB • Sadece Oyun</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #050505;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* RGB ANİMASYONLU ARKA PLAN */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(255, 0, 0, 0.03) 0%, 
+                rgba(0, 255, 0, 0.03) 33%, 
+                rgba(0, 0, 255, 0.03) 66%, 
+                rgba(255, 0, 255, 0.03) 100%);
+            background-size: 400% 400%;
+            animation: rgbBackground 15s ease infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes rgbBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* İçerik arka planın üstünde kalsın */
+        header, .hero, .row-container, footer, .player-overlay {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* RGB Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, #ff0080, #7928ca, #00d4ff);
+            border-radius: 10px;
+            animation: rgbScroll 3s infinite alternate;
+        }
+        @keyframes rgbScroll {
+            0% { background: linear-gradient(180deg, #ff0080, #7928ca, #00d4ff); }
+            100% { background: linear-gradient(180deg, #00d4ff, #7928ca, #ff0080); }
+        }
+
+        /* RGB Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 15px 40px;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 30px rgba(255, 0, 128, 0.1);
+        }
+
+        /* RGB Logo */
+        .logo {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(45deg, #ff0080, #7928ca, #00d4ff, #ff0080);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rgbText 6s ease infinite;
+            text-shadow: 0 0 30px rgba(255, 0, 128, 0.5);
+        }
+        .logo i { 
+            margin-right: 10px;
+            filter: drop-shadow(0 0 15px #ff0080);
+        }
+
+        @keyframes rgbText {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        nav a {
+            color: #aaa;
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 16px;
+            position: relative;
+            padding: 5px 0;
+        }
+        nav a:hover, nav a.active { 
+            color: #fff;
+            text-shadow: 0 0 15px #00d4ff;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, #ff0080, #00d4ff);
+            transition: width 0.3s;
+            box-shadow: 0 0 15px #ff0080;
+        }
+        nav a:hover::after, nav a.active::after { width: 100%; }
+
+        /* RGB Hero Section */
+        .hero {
+            height: 85vh;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 40px 60px;
+            margin-bottom: 20px;
+            isolation: isolate;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            pointer-events: none;
+            filter: blur(3px) brightness(0.8);
+        }
+
+        /* RGB Overlay on Hero */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(255, 0, 128, 0.15) 0%, 
+                rgba(121, 40, 202, 0.15) 50%, 
+                rgba(0, 212, 255, 0.15) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 5;
+            max-width: 650px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px #ff0080, 2px 2px 10px #000;
+            background: linear-gradient(45deg, #fff, #e0e0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #ddd;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px #7928ca;
+        }
+
+        /* RGB Button */
+        .btn-play {
+            background: linear-gradient(45deg, #ff0080, #7928ca, #00d4ff);
+            background-size: 200% 200%;
+            color: #fff;
+            border: none;
+            padding: 16px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.4s;
+            box-shadow: 0 0 40px rgba(255, 0, 128, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: rgbButton 4s ease infinite;
+            letter-spacing: 1px;
+        }
+        .btn-play:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 60px #00d4ff;
+            background-position: 100% 0;
+        }
+        @keyframes rgbButton {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Satır Başlıkları RGB */
+        .row-container {
+            padding: 0 40px;
+            margin-bottom: 40px;
+        }
+
+        .row-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #ff0080, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255,0,128,0.5);
+        }
+        .row-title i { 
+            color: #ff0080;
+            filter: drop-shadow(0 0 10px #ff0080);
+        }
+
+        /* Video Kartları */
+        .video-row {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .video-card {
+            flex: 0 0 auto;
+            width: 280px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 12px;
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(5px);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        /* RGB Border Glow on Hover */
+        .video-card::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #ff0080, #7928ca, #00d4ff, #ff0080);
+            background-size: 300% 300%;
+            border-radius: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+            animation: rgbBorder 4s linear infinite;
+        }
+        .video-card:hover::before {
+            opacity: 1;
+        }
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 0, 128, 0.4);
+            border-color: transparent;
+        }
+
+        @keyframes rgbBorder {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 300% 0%; }
+        }
+
+        .thumbnail {
+            position: relative;
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            transition: 0.3s;
+        }
+        .video-card:hover .thumbnail {
+            filter: brightness(1.1);
+        }
+        .duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 0, 128, 0.5);
+            color: #fff;
+            text-shadow: 0 0 8px #ff0080;
+        }
+
+        .card-info {
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(20,20,30,0.5));
+        }
+        .card-info h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+        }
+        .card-info p {
+            font-size: 13px;
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .card-info p i {
+            color: #ff0080;
+            font-size: 10px;
+        }
+
+        /* RGB PLAYER OVERLAY */
+        .player-overlay {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 420px;
+            background: rgba(5, 5, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 999;
+            box-shadow: 0 0 50px rgba(255, 0, 128, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* RGB border animation for player */
+        .player-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(45deg, #ff0080, #7928ca, #00d4ff, #ff0080);
+            background-size: 300% 300%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            animation: rgbBorder 4s linear infinite;
+            opacity: 0.8;
+        }
+
+        .player-overlay.expanded {
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            max-width: 1100px;
+            height: auto;
+            bottom: auto; right: auto;
+            box-shadow: 0 0 100px #ff0080;
+        }
+
+        .player-header {
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .player-header span { 
+            font-weight: bold; 
+            background: linear-gradient(45deg, #ff0080, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .player-controls i {
+            margin-left: 20px;
+            cursor: pointer;
+            color: #ccc;
+            transition: all 0.2s;
+            font-size: 18px;
+        }
+        .player-controls i:hover { 
+            color: #ff0080; 
+            text-shadow: 0 0 15px #ff0080;
+            transform: scale(1.1);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        /* Footer */
+        footer {
+            padding: 30px 40px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 30px;
+            backdrop-filter: blur(5px);
+        }
+        footer p {
+            background: linear-gradient(45deg, #ff0080, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 15px 20px; }
+            .logo { font-size: 24px; }
+            nav a { margin-left: 15px; font-size: 14px; }
+            .hero { padding: 0 20px 40px; height: 70vh; }
+            .hero h1 { font-size: 32px; }
+            .row-container { padding: 0 20px; }
+            .player-overlay { width: 90%; right: 5%; bottom: 20px; }
+            .video-card { width: 240px; }
+        }
+
+        /* Floating RGB Particles (ekstra hava) */
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: #ff0080;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #00d4ff;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- RGB Parçacıkları (görsel efekt) -->
+<script>
+    for(let i=0; i<30; i++) {
+        let p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animation = `floatParticle ${5 + Math.random()*10}s infinite alternate`;
+        document.body.appendChild(p);
+    }
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes floatParticle { 0% { transform: translateY(0px) translateX(0px); opacity:0; } 50% { opacity:0.5; } 100% { transform: translateY(-30px) translateX(20px); opacity:0; } }`;
+    document.head.appendChild(style);
+</script>
+
+<header>
+    <div class="logo"><i class="fas fa-gamepad"></i> GAME<span style="background:linear-gradient(45deg,#fff,#ccc);-webkit-background-clip:text;background-clip:text;color:transparent;">VID</span></div>
+    <nav>
+        <a href="#" class="active">Keşfet</a>
+        <a href="#">Canlı</a>
+        <a href="#">E-Spor</a>
+        <a href="#">Kütüphane</a>
+        <a href="#"><i class="fas fa-search"></i></a>
+    </nav>
+</header>
+
+<!-- Hero Bölümü -->
+<section class="hero">
+    <img class="hero-bg" src="https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cyberpunk">
+    <div class="hero-content">
+        <h1>CYBERPUNK 2077: PHANTOM LIBERTY</h1>
+        <p><i class="fas fa-fire" style="color:#ff0080;"></i> Yeni DLC'den 20 Dakikalık RGB Oynanış. Sadece GameVid'de.</p>
+        <button class="btn-play" onclick="playVideo('L6yTqW6z0u8', 'Cyberpunk 2077 DLC Oynanış')"><i class="fas fa-play"></i> HEMEN İZLE</button>
+    </div>
+</section>
+
+<!-- FPS Oyunları -->
+<div class="row-container">
+    <div class="row-title"><i class="fas fa-crosshairs"></i> FPS & AKSİYON</div>
+    <div class="video-row">
+        <div class="video-card" onclick="playVideo('dQw4w9WgXcQ', 'VALORANT - 40 Kill Oynanış')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/9072231/pexels-photo-9072231.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">12:40</span>
+            </div>
+            <div class="card-info"><h3>VALORANT • 40 Kill</h3><p><i class="fas fa-user"></i> Shroud</p></div>
+        </div>
+        <div class="video-card" onclick="playVideo('m7y4W6Qz8U0', 'Call of Duty Warzone Zafer')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/16115334/pexels-photo-16115334.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">18:22</span>
+            </div>
+            <div class="card-info"><h3>Warzone • Solo Zafer</h3><p><i class="fas fa-user"></i> Symfuhny</p></div>
+        </div>
+        <div class="video-card" onclick="playVideo('3q4r5s6t7u', 'CS2 Yeni Harita Taktikleri')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/7915519/pexels-photo-7915519.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">21:15</span>
+            </div>
+            <div class="card-info"><h3>CS2 • Mirage Smoke</h3><p><i class="fas fa-user"></i> WarOwl</p></div>
+        </div>
+        <div class="video-card" onclick="playVideo('9a8b7c6d5e', 'DOOM Eternal Ultra Nightmare')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/4009626/pexels-photo-4009626.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">34:10</span>
+            </div>
+            <div class="card-info"><h3>DOOM Eternal • No Hit</h3><p><i class="fas fa-user"></i> Zero Master</p></div>
+        </div>
+        <div class="video-card" onclick="playVideo('1z2y3x4w5v', 'Rainbow Six Siege Clutch')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">09:55</span>
+            </div>
+            <div class="card-info"><h3>R6 • 1v5 Clutch</h3><p><i class="fas fa-user"></i> Beaulo</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- RPG / Açık Dünya -->
+<div class="row-container">
+    <div class="row-title"><i class="fas fa-dragon"></i> RPG & AÇIK DÜNYA</div>
+    <div class="video-row">
+        <div class="video-card" onclick="playVideo('L6yTqW6z0u8', 'Elden Ring DLC Boss Rehberi')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/15932251/pexels-photo-15932251.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">27:30</span>
+            </div>
+            <div class="card-info"><h3>Elden Ring • Messmer</h3><p><i class="fas fa-user"></i> Ongbal</p></div>
+        </div>
+        <div class="video-card" onclick="playVideo('p7o6i5u4y3', 'Baldur\'s Gate 3 Onur Modu')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/25613153/pexels-photo-25613153.jpeg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">45:20</span>
+            </div>
+            <div class="card-info"><h3>BG3 • Onur Modu</h3><p><i class="fas fa-user"></i> WolfheartFPS</p></div>
+        </div>
+        <div class="video-card" onclick="playVideo('w2e3r4t5y6', 'Starfield Uzay Savaşı')">
+            <div class="thumbnail" style="background-image: url('https://images.pexels.com/photos/2156/sky-earth-space-working.jpg?auto=compress&cs=tinysrgb&w=400')">
+                <span class="duration">15:05</span>
+            </div>
+            <div class="card-info"><h3>Starfield • Gemi Yapımı</h3><p><i class="fas fa-user"></i> MxR</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- RGB Mini Player -->
+<div id="gamePlayer" class="player-overlay">
+    <div class="player-header">
+        <span id="playerTitle"><i class="fas fa-play" style="margin-right: 8px;"></i>Şimdi Oynatılıyor</span>
+        <div class="player-controls">
+            <i class="fas fa-expand" onclick="toggleExpand()" title="Büyüt / Küçült"></i>
+            <i class="fas fa-times" onclick="closePlayer()" title="Kapat"></i>
+        </div>
+    </div>
+    <div class="video-wrapper">
+        <iframe id="youtubeFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+</div>
+
+<footer>
+    <p>🎮 GAMEVID RGB • SADECE OYUN TUTKUNLARI İÇİN • #RGBGAMING</p>
+</footer>
+
+<script>
+    const playerDiv = document.getElementById('gamePlayer');
+    const iframe = document.getElementById('youtubeFrame');
+    const playerTitle = document.getElementById('playerTitle');
+
+    function playVideo(videoId, title) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&enablejsapi=1`;
+        playerTitle.innerHTML = `<i class="fas fa-play" style="margin-right: 8px;"></i>${title || 'Oyun Videosu'}`;
+        playerDiv.style.display = 'flex';
+        if (!playerDiv.classList.contains('expanded')) {
+            playerDiv.style.bottom = '30px';
+            playerDiv.style.right = '30px';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closePlayer() {
+        playerDiv.style.display = 'none';
+        iframe.src = '';
+        playerDiv.classList.remove('expanded');
+    }
+
+    function toggleExpand() {
+        if (playerDiv.classList.contains('expanded')) {
+            playerDiv.classList.remove('expanded');
+            playerDiv.style.bottom = '30px';
+            playerDiv.style.right = '30px';
+        } else {
+            playerDiv.classList.add('expanded');
+            playerDiv.style.bottom = 'auto';
+            playerDiv.style.right = 'auto';
+        }
+    }
+
+    console.log("🎮 GameVid RGB Mod aktif! Işıklar hazır.");
+</script>
+
+</body>
+</html>

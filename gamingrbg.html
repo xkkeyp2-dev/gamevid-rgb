@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GameVid RGB | Oyun Videolari Akista</title>
+    <meta name="theme-color" content="#0a0d17">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo"><i class="fas fa-gamepad"></i> GAME<span>VID</span></div>
+        <nav>
+            <a href="#" class="active">Kesfet</a>
+            <a href="#feedStatus">Akis</a>
+            <a href="#row-newest">En Yeni</a>
+            <a href="#row-popular">En Populer</a>
+            <a href="#" aria-label="Ara"><i class="fas fa-search"></i></a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <img id="heroImage" class="hero-bg" src="https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="GameVid one cikan video kapagi">
+        <div class="hero-content">
+            <p class="eyebrow">Otomatik oyun akisi</p>
+            <h1 id="heroTitle">YouTube kanallarindan yeni videolar yukleniyor</h1>
+            <p id="heroDescription"><i class="fas fa-fire"></i> API anahtari ve kanal ID'leri tanimlandiginda site videolari otomatik olarak cekip listeleyecek.</p>
+            <div class="hero-actions">
+                <button id="heroButton" class="btn-play" type="button" disabled>
+                    <i class="fas fa-play"></i>
+                    Video hazirlaniyor
+                </button>
+                <a id="heroLink" class="btn-secondary" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">
+                    <i class="fab fa-youtube"></i>
+                    YouTube'da ac
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="feed-status" id="feedStatus" aria-live="polite">
+        <div class="feed-status-card">
+            <div class="feed-status-copy">
+                <span class="status-pill">YouTube baglantisi</span>
+                <p id="feedStatusText">Yapilandirma bekleniyor.</p>
+            </div>
+            <button id="refreshFeedButton" class="feed-refresh-button" type="button">
+                <i class="fas fa-rotate-right"></i>
+                Akisi yenile
+            </button>
+        </div>
+    </section>
+
+    <section class="filter-shell" aria-label="Kanal filtreleri">
+        <div class="filter-header">
+            <p class="filter-kicker">Kanal filtresi</p>
+            <h2>Takip ettigin kanallara gore akisi daralt</h2>
+        </div>
+        <div id="channelFilters" class="filter-chips"></div>
+    </section>
+
+    <section class="row-container" data-section="newest">
+        <h2 class="row-title"><i class="fas fa-bolt"></i> En Yeni</h2>
+        <div class="video-row js-dynamic-row" id="row-newest"></div>
+    </section>
+
+    <section class="row-container" data-section="popular">
+        <h2 class="row-title"><i class="fas fa-fire"></i> En Populer</h2>
+        <div class="video-row js-dynamic-row" id="row-popular"></div>
+    </section>
+
+    <div id="gamePlayer" class="player-overlay" aria-live="polite">
+        <div class="player-header">
+            <span id="playerTitle"><i class="fas fa-play"></i> Simdi oynatiliyor</span>
+            <div class="player-controls">
+                <i class="fas fa-expand" onclick="toggleExpand()" title="Buyut veya kucult"></i>
+                <i class="fas fa-times" onclick="closePlayer()" title="Kapat"></i>
+            </div>
+        </div>
+        <div class="video-wrapper">
+            <iframe id="youtubeFrame" src="" allow="autoplay; encrypted-media" allowfullscreen title="Oynatici"></iframe>
+        </div>
+    </div>
+
+    <footer>
+        <p>GAMEVID RGB | Sadece oyun tutkunlari icin | #RGBGAMING</p>
+    </footer>
+
+    <script src="youtube-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
