@@ -16,12 +16,24 @@
     const feedStatusText = document.getElementById('feedStatusText');
     const channelFilters = document.getElementById('channelFilters');
     const refreshFeedButton = document.getElementById('refreshFeedButton');
+    const channelSpotlights = document.getElementById('channelSpotlights');
+    const themePicker = document.getElementById('themePicker');
+    const recentRow = document.getElementById('row-recent');
 
     const API_BASE = 'https://www.googleapis.com/youtube/v3';
     const CACHE_KEY = 'gamevid-youtube-cache-v1';
     const CACHE_TTL_MS = 1000 * 60 * 20;
+    const RECENT_KEY = 'gamevid-recent-videos-v1';
+    const THEME_KEY = 'gamevid-theme-v1';
+    const MAX_RECENT = 12;
+    const THEMES = [
+        { id: 'rgb-default', label: 'Neon RGB' },
+        { id: 'sunset-drive', label: 'Sunset Drive' },
+        { id: 'ice-core', label: 'Ice Core' }
+    ];
     let activeChannel = 'all';
     const sectionState = new Map();
+    let recentVideos = [];
 
     function setStatus(message, mode) {
         feedStatusText.textContent = message;
@@ -31,6 +43,26 @@
         }
 
         card.dataset.mode = mode || 'default';
+    }
+
+    function applyTheme(themeId) {
+        document.body.dataset.theme = themeId;
+        try {
+            window.localStorage.setItem(THEME_KEY, themeId);
+        } catch (error) {
+            console.warn('Tema kaydedilemedi:', error);
+        }
+    }
+
+    function hydrateTheme() {
+        let storedTheme = THEMES[0].id;
+        try {
+            storedTheme = window.localStorage.getItem(THEME_KEY) || THEMES[0].id;
+        } catch (error) {
+            console.warn('Tema okunamadi:', error);
+        }
+
+        applyTheme(storedTheme);
     }
 
     function isConfigReady() {
@@ -255,10 +287,12 @@
     }
 
     function buildVideoCard(video) {
+        const trendBadge = Number(video.viewCount || 0) >= 500000 ? '<span class="trend-flag">Trend</span>' : '';
         return `
             <article class="video-card" data-video-id="${escapeHtml(video.videoId)}" data-video-title="${escapeHtml(video.title)}" data-channel="${escapeHtml(video.channelTitle)}" data-video-url="${escapeHtml(video.url)}">
                 <div class="thumbnail" style="background-image: url('${escapeHtml(video.thumbnail)}')">
                     <span class="video-badge">${escapeHtml(video.channelTitle)}</span>
+                    ${trendBadge}
                     <span class="duration">${escapeHtml(video.duration || 'Canli')}</span>
                 </div>
                 <div class="card-info">
@@ -292,6 +326,48 @@
                 </div>
             </article>
         `;
+    }
+
+    function loadRecentVideos() {
+        try {
+            const raw = window.localStorage.getItem(RECENT_KEY);
+            recentVideos = raw ? JSON.parse(raw) : [];
+        } catch (error) {
+            console.warn('Son izlenenler okunamadi:', error);
+            recentVideos = [];
+        }
+    }
+
+    function saveRecentVideos() {
+        try {
+            window.localStorage.setItem(RECENT_KEY, JSON.stringify(recentVideos.slice(0, MAX_RECENT)));
+        } catch (error) {
+            console.warn('Son izlenenler kaydedilemedi:', error);
+        }
+    }
+
+    function renderRecentVideos() {
+        if (!recentRow) {
+            return;
+        }
+
+        if (!recentVideos.length) {
+            renderEmptyState(recentRow, 'Burada izledigin videolar birikecek.');
+            return;
+        }
+
+        recentRow.innerHTML = recentVideos.map(buildVideoCard).join('');
+        wireVideoCards();
+    }
+
+    function trackRecentVideo(video) {
+        if (!video || !video.videoId) {
+            return;
+        }
+
+        recentVideos = [video, ...recentVideos.filter((item) => item.videoId !== video.videoId)].slice(0, MAX_RECENT);
+        saveRecentVideos();
+        renderRecentVideos();
     }
 
     function wireVideoCards() {
@@ -335,6 +411,82 @@
             button.addEventListener('click', () => {
                 activeChannel = button.dataset.channelFilter;
                 renderChannelFilters();
+                renderChannelSpotlights();
+                renderSections();
+            });
+        });
+    }
+
+    function renderThemePicker() {
+        if (!themePicker) {
+            return;
+        }
+
+        const currentTheme = document.body.dataset.theme || THEMES[0].id;
+        themePicker.innerHTML = THEMES.map((theme) => `
+            <button class="theme-chip${theme.id === currentTheme ? ' is-active' : ''}" type="button" data-theme-id="${escapeHtml(theme.id)}">
+                <span class="theme-swatch ${escapeHtml(theme.id)}"></span>
+                ${escapeHtml(theme.label)}
+            </button>
+        `).join('');
+
+        themePicker.querySelectorAll('.theme-chip').forEach((button) => {
+            button.addEventListener('click', () => {
+                applyTheme(button.dataset.themeId);
+                renderThemePicker();
+            });
+        });
+    }
+
+    function buildChannelStats() {
+        const allVideos = [...sectionState.values()].flatMap((section) => section.videos || []);
+        return globalChannels.map((channel) => {
+            const label = channel.label || channel.channelHandle || 'Kanal';
+            const videos = allVideos.filter((video) => video.channelTitle === label);
+            const latest = videos.slice().sort((left, right) => new Date(right.publishedAt) - new Date(left.publishedAt))[0];
+            const totalViews = videos.reduce((sum, video) => sum + Number(video.viewCount || 0), 0);
+            return {
+                label,
+                handle: channel.channelHandle || '',
+                latest,
+                totalViews,
+                count: videos.length
+            };
+        });
+    }
+
+    function renderChannelSpotlights() {
+        if (!channelSpotlights) {
+            return;
+        }
+
+        const stats = buildChannelStats();
+        channelSpotlights.innerHTML = stats.map((item) => {
+            const isActive = activeChannel === item.label;
+            const preview = item.latest ? item.latest.title : 'Yeni videolar bekleniyor';
+            const thumb = item.latest && item.latest.thumbnail ? `style="background-image:url('${escapeHtml(item.latest.thumbnail)}')"` : '';
+            return `
+                <article class="channel-card${isActive ? ' is-active' : ''}" data-spotlight-channel="${escapeHtml(item.label)}">
+                    <div class="channel-art" ${thumb}></div>
+                    <div class="channel-copy">
+                        <p class="channel-handle">${escapeHtml(item.handle || item.label)}</p>
+                        <h3>${escapeHtml(item.label)}</h3>
+                        <p>${escapeHtml(preview)}</p>
+                        <div class="channel-stats">
+                            <span>${escapeHtml(String(item.count))} video</span>
+                            <span>${escapeHtml(formatViewCount(item.totalViews))}</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join('');
+
+        channelSpotlights.querySelectorAll('.channel-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                const nextChannel = card.dataset.spotlightChannel;
+                activeChannel = activeChannel === nextChannel ? 'all' : nextChannel;
+                renderChannelFilters();
+                renderChannelSpotlights();
                 renderSections();
             });
         });
@@ -450,9 +602,25 @@
     }
 
     window.playVideo = function playVideo(videoId, title) {
+        const allKnownVideos = [
+            ...recentVideos,
+            ...[...sectionState.values()].flatMap((section) => section.videos || [])
+        ];
+        const selectedVideo = allKnownVideos.find((video) => video.videoId === videoId) || {
+            videoId,
+            title,
+            channelTitle: activeChannel === 'all' ? 'GameVid' : activeChannel,
+            publishedAt: new Date().toISOString(),
+            thumbnail: '',
+            duration: '',
+            viewCount: '',
+            url: `https://www.youtube.com/watch?v=${videoId}`
+        };
+
         iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&enablejsapi=1`;
         playerTitle.innerHTML = `<i class="fas fa-play"></i> ${escapeHtml(title || 'Oyun videosu')}`;
         playerDiv.style.display = 'flex';
+        trackRecentVideo(selectedVideo);
 
         if (!playerDiv.classList.contains('expanded')) {
             playerDiv.style.bottom = '30px';
@@ -489,7 +657,11 @@
             createParticles();
         }
 
+        hydrateTheme();
         renderChannelFilters();
+        renderThemePicker();
+        loadRecentVideos();
+        renderRecentVideos();
 
         const rows = document.querySelectorAll('.js-dynamic-row');
         rows.forEach((row) => renderEmptyState(row, 'YouTube verileri yukleniyor.'));
@@ -497,6 +669,7 @@
         const cached = forceRefresh ? null : loadCache();
         if (cached && Array.isArray(cached.payload)) {
             applyCachedSections(cached.payload);
+            renderChannelSpotlights();
             return;
         }
 
@@ -537,6 +710,7 @@
             }
 
             renderSections();
+            renderChannelSpotlights();
             allVideos.sort((left, right) => new Date(right.publishedAt) - new Date(left.publishedAt));
             setHero(allVideos[0]);
             saveCache(cacheSections);
