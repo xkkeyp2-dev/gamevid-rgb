@@ -3,7 +3,7 @@ window.GAMEVID_CONFIG = {
     // YouTube Data API v3 etkin olmali.
     youtubeApiKey: 'AIzaSyBRjGkLRXmG8YHVNDfHRIxU--ZhCTwBHUE',
 
-    defaultVideoLimit: 8,
+    defaultVideoLimit: 12,
 
     channels: [
         { channelHandle: '@dogukanadaltvo', label: 'Dogukan Adal [Tvo]' },
@@ -18,13 +18,13 @@ window.GAMEVID_CONFIG = {
             id: 'newest',
             title: 'En Yeni',
             source: 'newest',
-            maxVideos: 10
+            maxVideos: 20
         },
         {
             id: 'popular',
             title: 'En Populer',
             source: 'popular',
-            maxVideos: 10
+            maxVideos: 20
         }
     ]
 };

@@ -234,7 +234,7 @@
     }
 
     async function loadChannelPopularVideos(channelConfig, limit) {
-        const sampleSize = Math.max(limit * 3, limit);
+        const sampleSize = Math.max(limit * 5, 20);
         const recentVideos = await loadChannelVideos(channelConfig, sampleSize);
         return recentVideos
             .slice()
