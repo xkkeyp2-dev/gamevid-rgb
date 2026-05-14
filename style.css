@@ -978,6 +978,188 @@ footer p {
     padding: 0 40px 28px;
 }
 
+.auth-shell {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.1fr) minmax(320px, 0.9fr);
+    gap: 18px;
+    padding: 0 40px 34px;
+    position: relative;
+    z-index: 1;
+}
+
+.auth-overview,
+.auth-card {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 0, 128, 0.12), transparent 32%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(10, 15, 24, 0.92));
+    box-shadow: var(--shadow);
+}
+
+.auth-overview {
+    padding: 26px;
+}
+
+.auth-overview h2 {
+    font-size: clamp(24px, 3vw, 34px);
+    margin-bottom: 12px;
+}
+
+.auth-copy {
+    color: var(--text-soft);
+    line-height: 1.7;
+}
+
+.auth-status {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+}
+
+.auth-status[data-mode='success'] {
+    border: 1px solid rgba(0, 212, 255, 0.32);
+}
+
+.auth-status[data-mode='warning'] {
+    border: 1px solid rgba(255, 184, 0, 0.32);
+}
+
+.auth-status[data-mode='error'] {
+    border: 1px solid rgba(255, 0, 128, 0.32);
+}
+
+.auth-card {
+    padding: 22px;
+}
+
+.auth-userbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-user-kicker {
+    color: var(--text-soft);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.auth-userbox h3 {
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+.auth-userbox p {
+    color: var(--text-soft);
+}
+
+.auth-signout {
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.auth-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.auth-tab {
+    flex: 1;
+    min-height: 46px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-tab.is-active {
+    color: var(--text);
+    border-color: rgba(0, 212, 255, 0.34);
+    background: linear-gradient(135deg, rgba(255, 0, 128, 0.18), rgba(0, 212, 255, 0.16));
+}
+
+.auth-form {
+    display: grid;
+    gap: 14px;
+}
+
+.auth-field {
+    display: grid;
+    gap: 8px;
+}
+
+.auth-field span {
+    color: var(--text-soft);
+    font-size: 14px;
+}
+
+.auth-field input {
+    width: 100%;
+    min-height: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    background: rgba(5, 10, 16, 0.82);
+    color: var(--text);
+    padding: 0 16px;
+    outline: none;
+}
+
+.auth-field input:focus {
+    border-color: rgba(0, 212, 255, 0.45);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.12);
+}
+
+.auth-submit {
+    min-height: 52px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b), var(--accent-c));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-feedback {
+    min-height: 24px;
+    color: var(--text-soft);
+    line-height: 1.5;
+}
+
+.auth-feedback[data-mode='success'] {
+    color: #9df5ff;
+}
+
+.auth-feedback[data-mode='error'] {
+    color: #ff95c2;
+}
+
+.auth-feedback[data-mode='warning'] {
+    color: #ffd36e;
+}
+
 .feed-status-card {
     display: flex;
     align-items: center;
@@ -1078,6 +1260,11 @@ footer p {
         padding: 0 20px 24px;
     }
 
+    .auth-shell {
+        grid-template-columns: 1fr;
+        padding: 0 20px 28px;
+    }
+
     .feed-status-card {
         align-items: flex-start;
         flex-direction: column;
@@ -1086,5 +1273,14 @@ footer p {
     .feed-refresh-button {
         width: 100%;
         justify-content: center;
+    }
+
+    .auth-userbox {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .auth-signout {
+        width: 100%;
     }
 }

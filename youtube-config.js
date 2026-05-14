@@ -7,6 +7,7 @@ window.GAMEVID_CONFIG = {
 
     channels: [
         { channelHandle: '@dogukanadaltvo', label: 'Dogukan Adal [Tvo]' },
+        { channelHandle: '@elraenn', label: 'Elraenn' },
         { channelHandle: '@tenticra', label: 'Tenticra' },
         { channelHandle: '@hugola', label: 'Hugola' },
         { channelHandle: '@aphernix', label: 'Aphernix' },

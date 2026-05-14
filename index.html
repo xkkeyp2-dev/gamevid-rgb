@@ -53,6 +53,51 @@
         </div>
     </section>
 
+    <section class="auth-shell" aria-label="Hesap merkezi">
+        <div class="auth-overview">
+            <p class="section-kicker">Hesap merkezi</p>
+            <h2>Kaydol, giris yap ve deneyimini kendi hesabinda tut</h2>
+            <p class="auth-copy">Firebase Authentication ile e-posta ve sifre kullanarak hesap olusturabilir, sonra ayni hesaptan tekrar giris yapabilirsin.</p>
+            <div class="auth-status" id="authStatusBanner">Firebase ayarlari bekleniyor.</div>
+        </div>
+
+        <div class="auth-card">
+            <div class="auth-userbox" id="authUserBox">
+                <div>
+                    <p class="auth-user-kicker">Oturum durumu</p>
+                    <h3 id="authUserTitle">Misafir modundasin</h3>
+                    <p id="authUserSubtitle">Kayit olunca hesabin bu cihazda oturumu korur.</p>
+                </div>
+                <button id="authSignOutButton" class="auth-signout" type="button" hidden>Cikis yap</button>
+            </div>
+
+            <div class="auth-toggle">
+                <button class="auth-tab is-active" type="button" data-auth-mode="login">Giris yap</button>
+                <button class="auth-tab" type="button" data-auth-mode="register">Kayit ol</button>
+            </div>
+
+            <form id="authForm" class="auth-form">
+                <label class="auth-field auth-name-field" id="authNameField" hidden>
+                    <span>Kullanici adi</span>
+                    <input id="authNameInput" type="text" placeholder="Ekranda gorunecek ad" autocomplete="nickname">
+                </label>
+
+                <label class="auth-field">
+                    <span>E-posta</span>
+                    <input id="authEmailInput" type="email" placeholder="ornek@mail.com" autocomplete="email" required>
+                </label>
+
+                <label class="auth-field">
+                    <span>Sifre</span>
+                    <input id="authPasswordInput" type="password" placeholder="En az 6 karakter" autocomplete="current-password" required>
+                </label>
+
+                <button id="authSubmitButton" class="auth-submit" type="submit">Giris yap</button>
+                <p class="auth-feedback" id="authFeedback">Hazir.</p>
+            </form>
+        </div>
+    </section>
+
     <section class="filter-shell" aria-label="Kanal filtreleri">
         <div class="filter-header">
             <p class="filter-kicker">Kanal filtresi</p>
@@ -106,6 +151,8 @@
     </footer>
 
     <script src="youtube-config.js"></script>
+    <script src="firebase-config.js"></script>
     <script src="app.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>
